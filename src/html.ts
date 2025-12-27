@@ -16,10 +16,10 @@ export const home = ({ error }: { error?: string }) => {
     </div>
   `
   document.querySelector<HTMLButtonElement>('#validateButton')!.onclick =
-    () => {
+    async () => {
       const input = document.querySelector<HTMLInputElement>('#keyInput')!.value
       const result = document.querySelector<HTMLParagraphElement>('#result')!
-      const query = new Query(input)
+      const query = await Query.create(input)
       const error = query.error()
       if (error) result.innerText = error
       else show(query)

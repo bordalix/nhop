@@ -94,3 +94,13 @@ export class Fetcher {
     return await pool.querySync(relays, filter)
   }
 }
+
+export const fetchNIP05Profile = async (pubkey: string): Promise<string> => {
+  if (!/^.+@.+$/.test(pubkey)) return ''
+  const [name, domain] = pubkey.split('@')
+  const url = `https://${domain}/.well-known/nostr.json?name=${name}`
+  const res = await fetch(url)
+  const data = await res.json()
+  if (!data || !data.names || !data.names[name]) return ''
+  return data.names[name]
+}

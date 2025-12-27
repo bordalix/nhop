@@ -2,7 +2,7 @@ import { home, show } from './html.ts'
 import { Query } from './query.ts'
 import './style.css'
 
-const query = new Query(window.location.search)
+const query = await Query.create(window.location.search)
 
 if (!query.input) {
   home({})

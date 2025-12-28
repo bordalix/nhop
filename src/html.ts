@@ -8,30 +8,29 @@ export const home = ({ error }: { error?: string }) => {
   document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
     <div>
       <h1>nhop</h1>
-      ${error ? `<p><strong style="color:red;">${error}</strong></p>` : ''}
-      <p>Welcome to nhop! Please enter your key below to validate it.</p>
+      <p>Welcome to nhop!</p>
+      <p>Support for nip05, nip19 and hex keys.</p>
       <input id="keyInput" type="text" placeholder="Enter your key here" />
-      <button id="validateButton">Validate Key</button>
-      <p id="result" style="color:red;"></p>
+      <button id="validateButton">Go</button>
+      <p id="showError" style="color:red;">${error || ''}</p>
     </div>
   `
   document.querySelector<HTMLButtonElement>('#validateButton')!.onclick =
     async () => {
       const input = document.querySelector<HTMLInputElement>('#keyInput')!.value
-      const result = document.querySelector<HTMLParagraphElement>('#result')!
+      const error = document.querySelector<HTMLParagraphElement>('#showError')!
       const query = await Query.create(input)
-      const error = query.error()
-      if (error) result.innerText = error
+      if (query.error) error.innerText = query.error
       else show(query)
     }
 }
 
 export const show = (query: Query) => {
-  showClients(query)
+  showLoading()
   // prettier-ignore
-  return query.isUser()
+  return query.isUser
     ? showUser(query)
-    : query.isNote()
+    : query.isNote
     ? showNote(query)
     : null
 }
@@ -53,7 +52,7 @@ const showUser = (query: Query) => {
         // return field html
         return `
           <div style="margin-bottom: 1rem;">
-            <h2>${type}:</h2>
+            <h2 style="margin:0">${type}:</h2>
             <p style="margin:0">${data}</p>
           </div>
         `
@@ -67,7 +66,7 @@ const showUser = (query: Query) => {
           text: n.content,
         }))
         return `
-          <h2>latest notes:</h2>
+          <h2 style="margin:0">latest notes:</h2>
           <ul>
             ${notes
               .map((n) => `<li><a href="?${n.note}">${n.text}</a></li>`)
@@ -75,6 +74,8 @@ const showUser = (query: Query) => {
           </ul>
         `
       }
+      // show share links
+      showClients(query)
       // render user content
       document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
         <div class="user-profile">
@@ -100,28 +101,31 @@ const showUser = (query: Query) => {
     })
     .catch((err) => {
       document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
-      <div>
-        <h1>Error</h1>
-        <p style="color:red;">${err.message}</p>
-      </div>
-    `
+        <div>
+          <h1>Error</h1>
+          <p style="color:red;">${err.message}</p>
+        </div>
+      `
     })
 }
 
 const showNote = (query: Query) => {
-  new Fetcher(query).fetchNote().then((event) => {
-    const npub = nip19.npubEncode(event.pubkey)
-    const note = nip19.noteEncode(event.id)
+  new Fetcher(query).fetchNote().then(({ id, created_at, pubkey, content }) => {
+    const npub = nip19.npubEncode(pubkey)
+    const note = nip19.noteEncode(id)
+    // show share links
+    showClients(query)
+    // render note content
     document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
       <div class="note-display">
         <h1>Note</h1>
         <div class="note-metadata">
           <p><strong>Author:</strong> <a href="?${npub}">${npub}</a></p>
           <p><strong>Note:</strong> <a href="?${note}">${note}</a></p>
-          <p><strong>When:</strong> ${pretty.time(event.created_at)}</p>
+          <p><strong>When:</strong> ${pretty.time(created_at)}</p>
         </div>
         <div class="note-content">
-          ${pretty.html(event.content)}
+          ${pretty.html(content)}
         </div>
       </div>
     `
@@ -137,4 +141,12 @@ const showClients = (query: Query) => {
   let html = a('Default client', `nostr:${query.input}`)
   html += clients.map((c) => a(c.name, `${c.url}/${query.input}`)).join('')
   document.querySelector<HTMLDivElement>('#clients')!.innerHTML = html
+  document.querySelector<HTMLDivElement>('#header')!.innerHTML = `
+    <button popovertarget="clients">Share</button>
+  `
+}
+
+const showLoading = () => {
+  document.querySelector<HTMLDivElement>('#app')!.innerHTML =
+    '<p>Loading...</p>'
 }

@@ -24,10 +24,13 @@ a:hover {
 
 body {
   margin: 0;
+  width: 100vw;
+  padding: 1rem;
+  box-sizing: border-box;
 }
 
 h1 {
-  margin-top: 0;
+  margin: 0;
   font-size: 3.2em;
   line-height: 1.1;
 }
@@ -35,38 +38,76 @@ h1 {
 h2 {
   font-size: 1em;
   line-height: 1.1;
-  margin-bottom: 0;
   font-weight: 400;
   color: rgba(255, 255, 255, 0.5);
 }
 
-main {
-  margin: 0;
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+  &:hover {
+    border-color: #646cff;
+  }
+  &:focus,
+  &:focus-visible {
+    outline: 4px auto -webkit-focus-ring-color;
+  }
+}
+
+input[type='text'] {
+  font-size: 1em;
+  padding: 0.6em;
+  border-radius: 8px;
+  border: 1px solid #444444;
+  background-color: #1a1a1a;
+  color: rgba(255, 255, 255, 0.87);
+  font-family: inherit;
+  width: 200px;
+  margin-right: 0.5rem;
+}
+
+#header {
   width: 100%;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
 }
 
 #app {
-  padding: 2em;
-  flex-grow: 1;
+  width: 600px;
+  max-width: 100%;
+  & p,
+  & li {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
 }
 
 #clients {
-  padding: 2em;
+  border: 0;
+  margin: 0;
+  padding: 1rem;
   height: 100vh;
-  width: 200px;
+  margin-left: auto;
+  background-color: #242424;
 }
 
 .client-link {
   width: 130px;
+  padding: 0.5em;
   font-size: 1em;
   font-weight: 500;
-  margin: 0.6rem auto;
   border-radius: 8px;
   text-align: center;
+  margin: 0.6rem auto;
   font-family: inherit;
-  padding: 0.5em;
   background-color: #1a1a1a;
   border: 1px solid transparent;
   &:hover {
@@ -76,8 +117,7 @@ main {
 }
 
 .note-display {
-  max-width: 600px;
-  margin-top: 1em;
+  width: 100%;
 }
 
 .note-metadata {
@@ -98,7 +138,7 @@ main {
     height: 10rem;
     object-fit: cover;
     border-radius: 50%;
-    margin-bottom: 1rem;
+    margin: 2rem 0;
     border: 1px solid silver;
   }
   & ul {
@@ -107,29 +147,7 @@ main {
     & li {
       margin: 0.2em 0;
       max-width: 600px;
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
     }
-  }
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-  &:hover {
-    border-color: #646cff;
-  }
-  &:focus,
-  &:focus-visible {
-    outline: 4px auto -webkit-focus-ring-color;
   }
 }
 

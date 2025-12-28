@@ -6,8 +6,8 @@ const query = await Query.create(window.location.search)
 
 if (!query.input) {
   home({})
-} else if (query.isValid()) {
-  show(query)
+} else if (query.error) {
+  home({ error: query.error })
 } else {
-  home({ error: query.error() })
+  show(query)
 }

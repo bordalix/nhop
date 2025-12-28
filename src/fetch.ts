@@ -17,13 +17,13 @@ export class Fetcher {
 
   async fetchNote(): Promise<NostrEvent> {
     let id = ''
-    if (this.query.getPrefix() === 'nevent') {
+    if (this.query.prefix === 'nevent') {
       const nevent = nip19.decode(this.query.input) as nip19.DecodedNevent
       if (nevent.type !== 'nevent') throw new Error('Invalid nevent')
       if (!nevent.data?.id) throw new Error('Invalid nevent data')
       id = nevent.data.id
     }
-    if (this.query.getPrefix() === 'note') {
+    if (this.query.prefix === 'note') {
       const noteDecoded = nip19.decode(this.query.input) as nip19.DecodedNote
       if (noteDecoded.type !== 'note') throw new Error('Invalid note')
       if (!noteDecoded.data) throw new Error('Invalid note data')
@@ -35,25 +35,25 @@ export class Fetcher {
 
   async fetchUser(): Promise<{ user: UserContent }> {
     let npub = ''
-    if (this.query.getPrefix() === 'naddr') {
+    if (this.query.prefix === 'naddr') {
       const naddr = nip19.decode(this.query.input) as nip19.DecodedNaddr
       if (naddr.type !== 'naddr') throw new Error('Invalid naddr')
       if (!naddr.data?.pubkey) throw new Error('Invalid naddr data')
       npub = naddr.data.pubkey
     }
-    if (this.query.getPrefix() === 'nsec') {
+    if (this.query.prefix === 'nsec') {
       const nsec = nip19.decode(this.query.input) as nip19.DecodedNsec
       if (nsec.type !== 'nsec') throw new Error('Invalid nsec')
       if (!nsec.data) throw new Error('Invalid nsec data')
       npub = getPublicKey(nsec.data)
     }
-    if (this.query.getPrefix() === 'nprofile') {
+    if (this.query.prefix === 'nprofile') {
       const nprofile = nip19.decode(this.query.input) as nip19.DecodedNprofile
       if (nprofile.type !== 'nprofile') throw new Error('Invalid nprofile')
       if (!nprofile.data?.pubkey) throw new Error('Invalid nprofile data')
       npub = nprofile.data.pubkey
     }
-    if (this.query.getPrefix() === 'npub') {
+    if (this.query.prefix === 'npub') {
       const npubDecoded = nip19.decode(this.query.input) as nip19.DecodedNpub
       if (npubDecoded.type !== 'npub') throw new Error('Invalid npub')
       if (!npubDecoded.data) throw new Error('Invalid npub data')

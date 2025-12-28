@@ -1,10 +1,4 @@
-import {
-  getPublicKey,
-  nip19,
-  SimplePool,
-  type Filter,
-  type NostrEvent,
-} from 'nostr-tools'
+import { getPublicKey, nip19, SimplePool, type Filter, type NostrEvent } from 'nostr-tools'
 import type { Query } from './query'
 import { relays, type UserContent } from './types'
 
@@ -69,9 +63,7 @@ export class Fetcher {
       kinds: [10002],
       authors: [npub],
     })
-    user.relays = relaysEvent
-      ? relaysEvent.tags.filter((t) => t[0] === 'r').map((t) => t[1])
-      : []
+    user.relays = relaysEvent ? relaysEvent.tags.filter((t) => t[0] === 'r').map((t) => t[1]) : []
     // fetch latest notes
     const noteEvents = await this.fetchEvents({
       authors: [npub],
@@ -86,6 +78,7 @@ export class Fetcher {
     filter.limit = 1
     const events = await this.fetchEvents(filter)
     if (events.length === 0) throw new Error('No events found')
+    console.log(events[0])
     return events[0]
   }
 

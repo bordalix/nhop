@@ -12,65 +12,6 @@ export const relays = [
   'wss://relay.bitcoinpark.com',
 ]
 
-export const clients: { name: string; url: string }[] = [
-  {
-    name: 'Amethyst',
-    url: 'https://amethyst.nostr.build',
-  },
-  {
-    name: 'Coracle',
-    url: 'https://coracle.social',
-  },
-  {
-    name: 'Damus',
-    url: 'https://damus.io',
-  },
-  {
-    name: 'Iris',
-    url: 'https://iris.to',
-  },
-  {
-    name: 'Jumble',
-    url: 'https://jumble.social',
-  },
-  {
-    name: 'Nosotros',
-    url: 'https://nosotros.app',
-  },
-  {
-    name: 'Nosta',
-    url: 'https://nosta.me',
-  },
-  {
-    name: 'NostrChat',
-    url: 'https://nostrchat.com',
-  },
-  {
-    name: 'Nostrudel',
-    url: 'https://nostrudel.ninja',
-  },
-  {
-    name: 'Nostter',
-    url: 'https://nostter.app',
-  },
-  {
-    name: 'Phoenix',
-    url: 'https://phoenix.social',
-  },
-  {
-    name: 'Primal',
-    url: 'https://primal.net',
-  },
-  {
-    name: 'Snort',
-    url: 'https://snort.social',
-  },
-  {
-    name: 'YakiHonne',
-    url: 'https://yakihonne.com',
-  },
-]
-
 export interface UserContent {
   about?: string
   banner?: string

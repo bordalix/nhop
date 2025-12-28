@@ -1,11 +1,14 @@
 :root {
+  --purple: #646cff;
+  --bgcolor: #242424;
+  --bgbutton: #141414;
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background-color: var(--bgcolor);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -15,7 +18,7 @@
 
 a {
   font-weight: 500;
-  color: #646cff;
+  color: var(--purple);
   text-decoration: inherit;
 }
 a:hover {
@@ -36,10 +39,15 @@ h1 {
 }
 
 h2 {
+  margin: 0;
   font-size: 1em;
   line-height: 1.1;
   font-weight: 400;
   color: rgba(255, 255, 255, 0.5);
+}
+
+h2 ~ p {
+  margin: 0;
 }
 
 button {
@@ -49,11 +57,11 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: var(--bgbutton);
   cursor: pointer;
   transition: border-color 0.25s;
   &:hover {
-    border-color: #646cff;
+    border-color: var(--purple);
   }
   &:focus,
   &:focus-visible {
@@ -66,7 +74,7 @@ input[type='text'] {
   padding: 0.6em;
   border-radius: 8px;
   border: 1px solid #444444;
-  background-color: #1a1a1a;
+  background-color: var(--bgbutton);
   color: rgba(255, 255, 255, 0.87);
   font-family: inherit;
   width: 200px;
@@ -96,7 +104,7 @@ input[type='text'] {
   padding: 1rem;
   height: 100vh;
   margin-left: auto;
-  background-color: #242424;
+  background-color: var(--bgcolor);
 }
 
 .client-link {
@@ -108,10 +116,10 @@ input[type='text'] {
   text-align: center;
   margin: 0.6rem auto;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: var(--bgbutton);
   border: 1px solid transparent;
   &:hover {
-    background-color: #646cff;
+    background-color: var(--purple);
     color: #ffffff;
   }
 }
@@ -121,15 +129,15 @@ input[type='text'] {
 }
 
 .note-metadata {
-  margin-top: 1em;
-  margin-bottom: 2em;
-  font-size: 0.9em;
-  color: rgba(255, 255, 255, 0.5);
+  margin: 1em 0;
+  & > div {
+    margin-bottom: 1rem;
+  }
 }
 
 .note-content {
   margin-bottom: 2em;
-  word-break: break-all;
+  word-break: break-word;
 }
 
 .user-profile {
@@ -149,6 +157,10 @@ input[type='text'] {
       max-width: 600px;
     }
   }
+}
+
+.user-details > div {
+  margin-bottom: 1rem;
 }
 
 @media (prefers-color-scheme: light) {

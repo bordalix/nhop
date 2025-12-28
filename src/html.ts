@@ -1,8 +1,9 @@
 import { Query } from './query'
 import { Fetcher } from './fetch'
-import { clients, type UserContent } from './types'
+import { type UserContent } from './types'
 import { pretty } from './pretty'
 import { nip19 } from 'nostr-tools'
+import { showClients } from './clients'
 
 export const home = ({ error }: { error?: string }) => {
   document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
@@ -15,14 +16,13 @@ export const home = ({ error }: { error?: string }) => {
       <p id="showError" style="color:red;">${error || ''}</p>
     </div>
   `
-  document.querySelector<HTMLButtonElement>('#validateButton')!.onclick =
-    async () => {
-      const input = document.querySelector<HTMLInputElement>('#keyInput')!.value
-      const error = document.querySelector<HTMLParagraphElement>('#showError')!
-      const query = await Query.create(input)
-      if (query.error) error.innerText = query.error
-      else show(query)
-    }
+  document.querySelector<HTMLButtonElement>('#validateButton')!.onclick = async () => {
+    const input = document.querySelector<HTMLInputElement>('#keyInput')!.value
+    const error = document.querySelector<HTMLParagraphElement>('#showError')!
+    const query = await Query.create(input)
+    if (query.error) error.innerText = query.error
+    else show(query)
+  }
 }
 
 export const show = (query: Query) => {
@@ -31,8 +31,8 @@ export const show = (query: Query) => {
   return query.isUser
     ? showUser(query)
     : query.isNote
-    ? showNote(query)
-    : null
+      ? showNote(query)
+      : null
 }
 
 const showUser = (query: Query) => {
@@ -46,14 +46,15 @@ const showUser = (query: Query) => {
         let data = Array.isArray(user[type as keyof UserContent])
           ? (user[type as keyof UserContent] as string[]).join('<br />')
           : (user[type as keyof UserContent] as string)
-        // add links for website field
-        if (type === 'website')
-          data = `<a href="${data}" target="_blank" rel="noopener noreferrer">${data}</a>`
+        // add link to website field
+        if (type === 'website') data = `<a href="${data}">${data}</a>`
+        // add link for npub field
+        if (type === 'npub') data = `<a href="/?${data}">${data}</a>`
         // return field html
         return `
-          <div style="margin-bottom: 1rem;">
-            <h2 style="margin:0">${type}:</h2>
-            <p style="margin:0">${data}</p>
+          <div>
+            <h2>${type}:</h2>
+            <p>${data}</p>
           </div>
         `
       }
@@ -66,11 +67,9 @@ const showUser = (query: Query) => {
           text: n.content,
         }))
         return `
-          <h2 style="margin:0">latest notes:</h2>
+          <h2>latest notes:</h2>
           <ul>
-            ${notes
-              .map((n) => `<li><a href="?${n.note}">${n.text}</a></li>`)
-              .join('')}
+            ${notes.map((n) => `<li><a href="?${n.note}">${n.text}</a></li>`).join('')}
           </ul>
         `
       }
@@ -110,9 +109,11 @@ const showUser = (query: Query) => {
 }
 
 const showNote = (query: Query) => {
-  new Fetcher(query).fetchNote().then(({ id, created_at, pubkey, content }) => {
+  new Fetcher(query).fetchNote().then(({ id, created_at, pubkey, content, tags }) => {
+    const rTag = tags.find((t) => t[0] === 'e' && t[3] === 'reply')?.[1] || ''
     const npub = nip19.npubEncode(pubkey)
     const note = nip19.noteEncode(id)
+    const rply = rTag ? nip19.noteEncode(rTag) : ''
     // show share links
     showClients(query)
     // render note content
@@ -120,11 +121,30 @@ const showNote = (query: Query) => {
       <div class="note-display">
         <h1>Note</h1>
         <div class="note-metadata">
-          <p><strong>Author:</strong> <a href="?${npub}">${npub}</a></p>
-          <p><strong>Note:</strong> <a href="?${note}">${note}</a></p>
-          <p><strong>When:</strong> ${pretty.time(created_at)}</p>
+          <div>
+            <h2>author:</h2>
+            <p><a href="/?${npub}">${npub}</a></p>
+          </div>
+          <div>
+            <h2>note:</h2>
+            <p><a href="/?${note}">${note}</a></p>
+          </div>
+          ${
+            rply
+              ? `
+              <div>
+                <h2>in reply to:</h2>
+                <p><a href="/?${rply}">${rply}</a></p>
+              </div>`
+              : ''
+          }
+          <div>
+            <h2>when:</h2>
+            <p>${pretty.time(created_at)}</p>
+          </div>
         </div>
         <div class="note-content">
+          <h2>content:</h2>
           ${pretty.html(content)}
         </div>
       </div>
@@ -132,21 +152,6 @@ const showNote = (query: Query) => {
   })
 }
 
-const showClients = (query: Query) => {
-  const a = (name: string, url: string) => `
-    <a href="${url}" rel="noopener noreferrer">
-      <p class="client-link">${name}</p>
-    </a>
-  `
-  let html = a('Default client', `nostr:${query.input}`)
-  html += clients.map((c) => a(c.name, `${c.url}/${query.input}`)).join('')
-  document.querySelector<HTMLDivElement>('#clients')!.innerHTML = html
-  document.querySelector<HTMLDivElement>('#header')!.innerHTML = `
-    <button popovertarget="clients">Share</button>
-  `
-}
-
 const showLoading = () => {
-  document.querySelector<HTMLDivElement>('#app')!.innerHTML =
-    '<p>Loading...</p>'
+  document.querySelector<HTMLDivElement>('#app')!.innerHTML = '<p>Loading...</p>'
 }

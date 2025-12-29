@@ -1,6 +1,6 @@
 export const showHeader = () => {
   document.querySelector<HTMLDivElement>('#header')!.innerHTML = `
-    <button onclick="location.href='/'" aria-label="Home">
+    <button id="home-button" aria-label="Home">
       <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 0 20 20">
         <path
           fill="var(--purple)"
@@ -21,4 +21,7 @@ export const showHeader = () => {
       </svg>
     </button>
   `
+  document.querySelector('#home-button')?.addEventListener('click', () => {
+    location.href = '/'
+  })
 }

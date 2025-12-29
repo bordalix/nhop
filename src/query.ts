@@ -42,8 +42,8 @@ export class Query {
     }
     // resolve nip05 to npub
     if (/^.+@.+$/.test(input)) {
-      const { npub, relays: nip5relays } = await fetchNIP05Profile(input)
-      if (npub) input = nip19.npubEncode(npub)
+      const { pubkey, relays: nip5relays } = await fetchNIP05Profile(input)
+      if (pubkey) input = nip19.npubEncode(pubkey)
       if (nip5relays) relays = nip5relays
     }
     // validate prefix

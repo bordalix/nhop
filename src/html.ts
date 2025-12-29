@@ -1,9 +1,9 @@
 import { Query } from './query'
 import { Fetcher } from './fetch'
-import { type UserContent } from './types'
 import { pretty } from './pretty'
 import { nip19 } from 'nostr-tools'
 import { showClients } from './clients'
+import type { UserContent } from './types'
 
 export const home = ({ error }: { error?: string }) => {
   document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
@@ -110,7 +110,7 @@ const showUser = (query: Query) => {
 
 const showNote = (query: Query) => {
   new Fetcher(query).fetchNote().then(({ id, created_at, pubkey, content, tags }) => {
-    const rTag = tags.find((t) => t[0] === 'e' && t[3] === 'reply')?.[1] || ''
+    const rTag = tags.find((t) => t[0] === 'e' && ['reply', 'root'].includes(t[3]))?.[1] || ''
     const npub = nip19.npubEncode(pubkey)
     const note = nip19.noteEncode(id)
     const rply = rTag ? nip19.noteEncode(rTag) : ''

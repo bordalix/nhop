@@ -4,14 +4,6 @@ export const userPrefixes = ['nsec', 'npub', 'nprofile']
 export const notePrefixes = ['nevent', 'note']
 export const suppPrefixes = [...userPrefixes, ...notePrefixes]
 
-export const relays = [
-  'wss://nos.lol',
-  'wss://relay.damus.io',
-  'wss://relay.primal.net',
-  'wss://relay.noswhere.com',
-  'wss://relay.bitcoinpark.com',
-]
-
 export interface UserContent {
   about?: string
   banner?: string

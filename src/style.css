@@ -81,10 +81,17 @@ input[type='text'] {
   margin-right: 0.5rem;
 }
 
+main {
+  max-width: 640px;
+  margin: 0 auto;
+  position: relative;
+}
+
 #header {
   width: 100%;
   display: flex;
-  justify-content: flex-end;
+  margin-bottom: 2rem;
+  justify-content: space-between;
 }
 
 #app {
@@ -101,9 +108,10 @@ input[type='text'] {
 #clients {
   border: 0;
   margin: 0;
-  padding: 1rem;
-  height: 100vh;
-  margin-left: auto;
+  top: 4rem;
+  padding: 0;
+  position: relative;
+  left: calc((100vw - 640px) / 2 + 640px - 146px);
   background-color: var(--bgcolor);
 }
 
@@ -173,5 +181,12 @@ input[type='text'] {
   }
   button {
     background-color: #f9f9f9;
+  }
+}
+
+@media screen and (max-width: 640px) {
+  #clients {
+    left: calc(100vw - 164px);
+    background-color: var(--bgcolor);
   }
 }

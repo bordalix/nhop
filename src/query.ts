@@ -1,30 +1,39 @@
-import { nip19 } from 'nostr-tools'
 import { notePrefixes, suppPrefixes, userPrefixes } from './types'
 import { fetchNIP05Profile } from './fetch'
+import { parseNip19 } from './parser'
+import { nip19 } from 'nostr-tools'
 
 export class Query {
+  hex: string
   error: string
   input: string
   prefix: string
   isNote: boolean
   isUser: boolean
+  relays: string[]
 
   constructor(
+    hex: string,
     error: string,
     input: string,
     prefix: string,
     isNote: boolean,
-    isUser: boolean
+    isUser: boolean,
+    relays: string[]
   ) {
+    this.hex = hex
     this.error = error
     this.input = input
     this.prefix = prefix
     this.isNote = isNote
     this.isUser = isUser
+    this.relays = relays
   }
 
   static async create(input: string): Promise<Query> {
+    let hex = ''
     let error = ''
+    let relays: string[] = []
     // clean input
     input = input.replace('?', '')
     // convert hex to note
@@ -33,8 +42,9 @@ export class Query {
     }
     // resolve nip05 to npub
     if (/^.+@.+$/.test(input)) {
-      const npub = await fetchNIP05Profile(input)
+      const { npub, relays: nip5relays } = await fetchNIP05Profile(input)
       if (npub) input = nip19.npubEncode(npub)
+      if (nip5relays) relays = nip5relays
     }
     // validate prefix
     const prefix = input.match(/^(n[A-Za-z]+)1/)?.[1] || ''
@@ -42,12 +52,15 @@ export class Query {
     // check type
     const isNote = notePrefixes.includes(prefix)
     const isUser = userPrefixes.includes(prefix)
-    // validate nip19 decoding
+    // parse nip19
     try {
-      nip19.decode(input)
+      const { hex: parsedHex, relays: parsedRelays } = parseNip19(input)
+      relays = [...new Set([...relays, ...parsedRelays])]
+      hex = parsedHex
     } catch (e) {
       error = e instanceof Error ? e.message : 'Invalid key'
     }
-    return new Query(error, input, prefix, isNote, isUser)
+    // return query
+    return new Query(hex, error, input, prefix, isNote, isUser, relays)
   }
 }

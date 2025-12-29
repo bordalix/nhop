@@ -1,70 +1,39 @@
-import { getPublicKey, nip19, SimplePool, type Filter, type NostrEvent } from 'nostr-tools'
 import type { Query } from './query'
-import { relays, type UserContent } from './types'
+import { mergeRelays } from './relays'
+import { SimplePool } from 'nostr-tools'
+import type { UserContent } from './types'
+import type { Filter, NostrEvent } from 'nostr-tools'
 
 export class Fetcher {
   query: Query
+  relays: string[] // can be populated from naddr, nprofile, nevent
 
   constructor(query: Query) {
     this.query = query
+    this.relays = query.relays
   }
 
   async fetchNote(): Promise<NostrEvent> {
-    let id = ''
-    if (this.query.prefix === 'nevent') {
-      const nevent = nip19.decode(this.query.input) as nip19.DecodedNevent
-      if (nevent.type !== 'nevent') throw new Error('Invalid nevent')
-      if (!nevent.data?.id) throw new Error('Invalid nevent data')
-      id = nevent.data.id
-    }
-    if (this.query.prefix === 'note') {
-      const noteDecoded = nip19.decode(this.query.input) as nip19.DecodedNote
-      if (noteDecoded.type !== 'note') throw new Error('Invalid note')
-      if (!noteDecoded.data) throw new Error('Invalid note data')
-      id = noteDecoded.data
-    }
+    const id = this.query.hex
     if (!id) throw new Error('Could not get event id')
     return await this.fetchEvent({ ids: [id] })
   }
 
   async fetchUser(): Promise<{ user: UserContent }> {
-    let npub = ''
-    if (this.query.prefix === 'naddr') {
-      const naddr = nip19.decode(this.query.input) as nip19.DecodedNaddr
-      if (naddr.type !== 'naddr') throw new Error('Invalid naddr')
-      if (!naddr.data?.pubkey) throw new Error('Invalid naddr data')
-      npub = naddr.data.pubkey
-    }
-    if (this.query.prefix === 'nsec') {
-      const nsec = nip19.decode(this.query.input) as nip19.DecodedNsec
-      if (nsec.type !== 'nsec') throw new Error('Invalid nsec')
-      if (!nsec.data) throw new Error('Invalid nsec data')
-      npub = getPublicKey(nsec.data)
-    }
-    if (this.query.prefix === 'nprofile') {
-      const nprofile = nip19.decode(this.query.input) as nip19.DecodedNprofile
-      if (nprofile.type !== 'nprofile') throw new Error('Invalid nprofile')
-      if (!nprofile.data?.pubkey) throw new Error('Invalid nprofile data')
-      npub = nprofile.data.pubkey
-    }
-    if (this.query.prefix === 'npub') {
-      const npubDecoded = nip19.decode(this.query.input) as nip19.DecodedNpub
-      if (npubDecoded.type !== 'npub') throw new Error('Invalid npub')
-      if (!npubDecoded.data) throw new Error('Invalid npub data')
-      npub = npubDecoded.data
-    }
+    const npub = this.query.hex
     if (!npub) throw new Error('Could not derive npub')
     // fetch user metadata
     const userEvent = await this.fetchEvent({ kinds: [0], authors: [npub] })
-    if (!userEvent) throw new Error('No user events found')
-    const user: UserContent = JSON.parse(userEvent.content)
+    if (!userEvent) throw new Error('No user event found')
+    const user = JSON.parse(userEvent.content) as UserContent
     // fetch user relays
     const relaysEvent = await this.fetchEvent({
       kinds: [10002],
       authors: [npub],
     })
     user.relays = relaysEvent ? relaysEvent.tags.filter((t) => t[0] === 'r').map((t) => t[1]) : []
-    // fetch latest notes
+    this.relays = [...this.query.relays, ...user.relays] // we could have relays extracted before
+    // fetch latest notes from user
     const noteEvents = await this.fetchEvents({
       authors: [npub],
       kinds: [1],
@@ -78,22 +47,27 @@ export class Fetcher {
     filter.limit = 1
     const events = await this.fetchEvents(filter)
     if (events.length === 0) throw new Error('No events found')
-    console.log(events[0])
     return events[0]
   }
 
   async fetchEvents(filter: Filter): Promise<NostrEvent[]> {
     const pool = new SimplePool()
+    const relays = mergeRelays(this.relays) // merge with default relays
     return await pool.querySync(relays, filter)
   }
 }
 
-export const fetchNIP05Profile = async (pubkey: string): Promise<string> => {
-  if (!/^.+@.+$/.test(pubkey)) return ''
+export const fetchNIP05Profile = async (pubkey: string): Promise<{ npub: string; relays: string[] }> => {
+  if (!/^.+@.+$/.test(pubkey)) throw new Error('Invalid NIP-05 format')
   const [name, domain] = pubkey.split('@')
   const url = `https://${domain}/.well-known/nostr.json?name=${name}`
   const res = await fetch(url)
-  const data = await res.json()
-  if (!data || !data.names || !data.names[name]) return ''
-  return data.names[name]
+  const data = (await res.json()) as {
+    names: Record<string, string>
+    relays?: Record<string, string[]>
+  }
+  if (!data.names[name]) throw new Error('NIP-05 profile not found')
+  const npub = data.names[name]
+  const relays = data.relays?.[npub] || []
+  return { npub, relays }
 }

@@ -1,3 +1,4 @@
+import { showHeader } from './header'
 import type { Query } from './query'
 
 type Client = {
@@ -68,11 +69,15 @@ export const clients: Client[] = [
 ]
 
 export const showClients = (query: Query) => {
+  // show header
+  showHeader()
+  // prepare clients links
   const a = (name: string, url: string) => `
     <a href="${url}" target="_blank" rel="noopener noreferrer">
       <p class="client-link">${name}</p>
     </a>
   `
+  // build html
   let html = a('Default client', `nostr:${query.input}`)
   html += clients
     .map((c) => {
@@ -82,19 +87,5 @@ export const showClients = (query: Query) => {
       return a(c.name, url)
     })
     .join('')
-  document.querySelector<HTMLDivElement>('#clients')!.innerHTML = html
-  document.querySelector<HTMLDivElement>('#header')!.innerHTML = `
-    <button popovertarget="clients">
-      <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 0 32 32">
-        <path
-          fill="none"
-          stroke-width="2"
-          stroke="var(--purple)"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M5 17v8a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2v-8m-11 3V3.5M22 9l-6-6l-6 6"
-        />
-      </svg>
-    </button>
-  `
+  document.querySelector<HTMLDivElement>('#clients')!.innerHTML = `<div>${html}</div>`
 }

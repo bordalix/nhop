@@ -87,6 +87,7 @@ const showUser = (query: Query) => {
           <div class="user-details">
             ${field('about')}
             ${field('lud16')}
+            ${field('pubkey')}
             ${field('npub')}
             ${field('username')}
             ${field('website')}
@@ -124,6 +125,10 @@ const showNote = (query: Query) => {
           <div>
             <h2>author:</h2>
             <p><a href="/?${npub}">${npub}</a></p>
+          </div>
+          <div>
+            <h2>id:</h2>
+            <p><a href="/?${id}">${id}</a></p>
           </div>
           <div>
             <h2>note:</h2>

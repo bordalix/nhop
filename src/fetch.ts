@@ -21,7 +21,7 @@ export class Fetcher {
 
   async fetchUser(): Promise<{ user: UserContent }> {
     const pubkey = this.query.hex
-    if (!pubkey) throw new Error('Could not derive npub')
+    if (!pubkey) throw new Error('Could not derive pubkey')
     // fetch user metadata
     const userEvent = await this.fetchEvent({ kinds: [0], authors: [pubkey] })
     if (!userEvent) throw new Error('No user event found')
@@ -62,9 +62,9 @@ export class Fetcher {
   }
 }
 
-export const fetchNIP05Profile = async (pubkey: string): Promise<{ pubkey: string; relays: string[] }> => {
-  if (!/^.+@.+$/.test(pubkey)) throw new Error('Invalid NIP-05 format')
-  const [name, domain] = pubkey.split('@')
+export const fetchNIP05Profile = async (nip05: string): Promise<{ pubkey: string; relays: string[] }> => {
+  if (!/^.+@.+$/.test(nip05)) throw new Error('Invalid NIP-05 format')
+  const [name, domain] = nip05.split('@')
   const url = `https://${domain}/.well-known/nostr.json?name=${name}`
   let data: { names: Record<string, string>; relays?: Record<string, string[]> }
   try {
@@ -75,7 +75,7 @@ export const fetchNIP05Profile = async (pubkey: string): Promise<{ pubkey: strin
     throw new Error(`Failed to fetch NIP-05 profile: ${error instanceof Error ? error.message : 'Unknown error'}`)
   }
   if (!data.names[name]) throw new Error('NIP-05 profile not found')
-  const npub = data.names[name]
-  const relays = data.relays?.[npub] || []
+  const pubkey = data.names[name]
+  const relays = data.relays?.[pubkey] || []
   return { pubkey, relays }
 }

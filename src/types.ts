@@ -1,7 +1,7 @@
 import type { NostrEvent } from 'nostr-tools'
 
-export const userPrefixes = ['nsec', 'npub', 'nprofile']
 export const notePrefixes = ['nevent', 'note']
+export const userPrefixes = ['naddr', 'nprofile', 'npub', 'nsec']
 export const suppPrefixes = [...userPrefixes, ...notePrefixes]
 
 export interface UserContent {
@@ -11,6 +11,7 @@ export interface UserContent {
   displayName?: string
   lud16?: string
   name?: string
+  nip05?: string
   notes?: NostrEvent[]
   npub?: string
   picture?: string

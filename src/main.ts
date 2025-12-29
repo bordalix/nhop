@@ -1,4 +1,4 @@
-import { home, show } from './html.ts'
+import { home, show } from './show.ts'
 import { Query } from './query.ts'
 import './style.css'
 

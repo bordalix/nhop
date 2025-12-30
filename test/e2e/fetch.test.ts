@@ -1,6 +1,6 @@
 import { describe, expect, test, vi } from 'vitest'
-import { Fetcher, fetchNIP05Profile } from '../src/fetch'
-import { Query } from '../src/query'
+import { Fetcher, fetchNIP05Profile } from '../../src/fetch'
+import { Query } from '../../src/query'
 import { naddrEncode, neventEncode, noteEncode, nprofileEncode, npubEncode } from 'nostr-tools/nip19'
 
 describe('fetch tests', () => {
@@ -15,7 +15,7 @@ describe('fetch tests', () => {
     pubkey,
   }
 
-  vi.setConfig({ testTimeout: 10000 })
+  vi.setConfig({ testTimeout: 15000 })
 
   describe('fetchNIP05Profile', () => {
     test('should fetch nip05 profile', async () => {

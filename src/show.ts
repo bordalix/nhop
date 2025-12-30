@@ -14,6 +14,9 @@ export const home = ({ error }: { error?: string }) => {
       <input id="keyInput" type="text" placeholder="Enter your key here" />
       <button id="validateButton">Go</button>
       <p id="showError" style="color:red;">${error || ''}</p>
+      <p style="font-size:0.9em; color:var(--gray);">
+        <a href="https://github.com/bordalix/nhop">github</a>
+      </p>
     </div>
   `
   document.querySelector<HTMLButtonElement>('#validateButton')!.onclick = async () => {

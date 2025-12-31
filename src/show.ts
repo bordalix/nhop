@@ -47,7 +47,7 @@ const showUser = (query: Query) => {
         if (!user[type as keyof UserContent]) return ''
         // prepare field data
         let data = Array.isArray(user[type as keyof UserContent])
-          ? (user[type as keyof UserContent] as string[]).join('<br />')
+          ? (user[type as keyof UserContent] as string[]).sort().join('<br />')
           : (user[type as keyof UserContent] as string)
         // add link to website field
         if (type === 'website') data = `<a href="${data}">${data}</a>`
@@ -65,10 +65,12 @@ const showUser = (query: Query) => {
       const notesList = () => {
         if (!user.notes || user.notes.length === 0) return '<p>No notes.</p>'
         // prepare notes list
-        const notes = user.notes.map((n) => ({
-          note: nip19.noteEncode(n.id),
-          text: n.content,
-        }))
+        const notes = user.notes
+          .sort((a, b) => b.created_at - a.created_at)
+          .map((n) => ({
+            note: nip19.noteEncode(n.id),
+            text: n.content,
+          }))
         return `
           <h2>latest notes:</h2>
           <ul>

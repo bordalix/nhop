@@ -42,6 +42,7 @@ const showUser = (query: Query) => {
   new Fetcher(query)
     .fetchUser()
     .then(({ user }) => {
+      console.log('Fetched user:', user)
       // component to display content fields
       const field = (type: string) => {
         if (!user[type as keyof UserContent]) return ''
@@ -53,6 +54,10 @@ const showUser = (query: Query) => {
         if (type === 'website') data = `<a href="${data}">${data}</a>`
         // add link for npub field
         if (type === 'npub') data = `<a href="/?${data}">${data}</a>`
+        // add link for nip05 field
+        if (type === 'nip05') data = `<a href="/?${data}">${data}</a>`
+        // add link for lud16 field
+        if (type === 'lud16') data = `<a href="lightning:${data}">${data}</a>`
         // return field html
         return `
           <div>
@@ -72,7 +77,7 @@ const showUser = (query: Query) => {
             text: n.content,
           }))
         return `
-          <h2>latest notes:</h2>
+          <h2 style="margin-top: 2rem;">latest notes:</h2>
           <ul>
             ${notes.map((n) => `<li><a href="?${n.note}">${n.text}</a></li>`).join('')}
           </ul>
@@ -92,6 +97,7 @@ const showUser = (query: Query) => {
           <div class="user-details">
             ${field('about')}
             ${field('lud16')}
+            ${field('nip05')}
             ${field('pubkey')}
             ${field('npub')}
             ${field('username')}

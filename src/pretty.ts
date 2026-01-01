@@ -22,10 +22,7 @@ export const pretty = {
     if (content.match(/nostr:/)) {
       for (const match of content.match(/nostr:.*/g) || []) {
         const id = match.split(':')[1]
-        content = content.replace(
-          match,
-          `<a href="https://njump.me/${id}">${match}</a>`
-        )
+        content = content.replace(match, `<a href="/?${id}">${match}</a>`)
       }
     }
     return content.replace(/\n/g, '<br />')

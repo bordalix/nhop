@@ -25,6 +25,7 @@ a {
   color: var(--purple);
   text-decoration: inherit;
 }
+
 a:hover {
   color: var(--purplehover);
 }

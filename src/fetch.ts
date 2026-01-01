@@ -1,7 +1,7 @@
 import type { Query } from './query'
 import { mergeRelays } from './relays'
-import { SimplePool } from 'nostr-tools'
 import type { UserContent } from './types'
+import { nip19, SimplePool } from 'nostr-tools'
 import type { Filter, NostrEvent } from 'nostr-tools'
 
 export class Fetcher {
@@ -22,12 +22,15 @@ export class Fetcher {
   async fetchUser(): Promise<{ user: UserContent }> {
     const pubkey = this.query.hex
     if (!pubkey) throw new Error('Could not derive pubkey')
+    const npub = nip19.npubEncode(pubkey)
     // fetch user metadata
     const userEvent = await this.fetchEvent({ kinds: [0], authors: [pubkey] })
     if (!userEvent) throw new Error('No user event found')
     let user: UserContent
     try {
       user = JSON.parse(userEvent.content) as UserContent
+      user.pubkey = pubkey
+      user.npub = npub
     } catch (error) {
       throw new Error(`Failed to parse user metadata: ${error instanceof Error ? error.message : 'Invalid JSON'}`)
     }

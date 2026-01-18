@@ -1,3 +1,6 @@
+/**
+ * Pretty printing utilities
+ */
 export const pretty = {
   date: (unix: number): string => {
     return new Date(unix * 1000).toLocaleDateString('en-us', {

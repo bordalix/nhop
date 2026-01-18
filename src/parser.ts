@@ -1,5 +1,13 @@
 import { getPublicKey, nip19 } from 'nostr-tools'
 
+/**
+ * Parse NIP-19 encoded input and return hex and relays
+ * - if naddr or nevent: return pubkey and relays
+ * - if note, nprofile, npub: return pubkey
+ * - if nsec: return derived pubkey
+ * @param input
+ * @returns object with hex and relays
+ */
 export const parseNip19 = (input: string): { hex: string; relays: string[] } => {
   if (input.startsWith('nevent1')) {
     const nevent = nip19.decode(input) as nip19.DecodedNevent

@@ -4,6 +4,9 @@ import type { UserContent } from './types'
 import { nip19, SimplePool } from 'nostr-tools'
 import type { Filter, NostrEvent } from 'nostr-tools'
 
+/**
+ * Fetcher class to get notes and user metadata from relays
+ */
 export class Fetcher {
   relays: string[] // can be populated from naddr, nprofile, nevent
 
@@ -68,6 +71,11 @@ export class Fetcher {
   }
 }
 
+/**
+ * Fetch NIP-05 profile to get pubkey and relays
+ * @param nip05 should be in the format name@domain
+ * @returns object with pubkey and relays
+ */
 export const fetchNIP05Profile = async (nip05: string): Promise<{ pubkey: string; relays: string[] }> => {
   if (!/^.+@.+$/.test(nip05)) throw new Error('Invalid NIP-05 format')
   const [name, domain] = nip05.split('@')

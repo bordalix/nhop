@@ -5,6 +5,10 @@ import { nip19 } from 'nostr-tools'
 import { showClients } from './clients'
 import type { UserContent } from './types'
 
+/**
+ * Show home page
+ * @param param0
+ */
 export const home = ({ error }: { error?: string }) => {
   document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
     <div>
@@ -28,6 +32,10 @@ export const home = ({ error }: { error?: string }) => {
   }
 }
 
+/**
+ * Show content based on query type
+ * @param query
+ */
 export const show = (query: Query) => {
   showLoading()
   // prettier-ignore
@@ -38,6 +46,10 @@ export const show = (query: Query) => {
       : null
 }
 
+/**
+ * Show user profile
+ * @param query
+ */
 const showUser = (query: Query) => {
   new Fetcher(query)
     .fetchUser()
@@ -121,6 +133,10 @@ const showUser = (query: Query) => {
     })
 }
 
+/**
+ * Show note content
+ * @param query
+ */
 const showNote = (query: Query) => {
   new Fetcher(query).fetchNote().then(({ id, created_at, pubkey, content, tags }) => {
     const rTag = tags.find((t) => t[0] === 'e' && ['reply', 'root'].includes(t[3]))?.[1] || ''
@@ -169,6 +185,9 @@ const showNote = (query: Query) => {
   })
 }
 
+/**
+ * Show loading state
+ */
 const showLoading = () => {
   document.querySelector<HTMLDivElement>('#app')!.innerHTML = '<p>Loading...</p>'
 }

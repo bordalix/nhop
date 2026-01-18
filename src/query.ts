@@ -3,6 +3,10 @@ import { fetchNIP05Profile } from './fetch'
 import { parseNip19 } from './parser'
 import { nip19 } from 'nostr-tools'
 
+/**
+ * Query class to represent parsed input query
+ * @example const query = await Query.create('npub1...')
+ */
 export class Query {
   constructor(
     public hex: string,

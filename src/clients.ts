@@ -1,6 +1,12 @@
 import { showHeader } from './header'
 import type { Query } from './query'
 
+/**
+ * Clients data and links
+ * Path can have:
+ *  - user: user profile path
+ *  - note: note path
+ */
 type Client = {
   name: string
   site: string
@@ -10,6 +16,9 @@ type Client = {
   }
 }
 
+/**
+ * Supported clients
+ */
 export const clients: Client[] = [
   {
     name: 'Coracle',
@@ -39,7 +48,7 @@ export const clients: Client[] = [
   {
     name: 'Nosta',
     site: 'https://nosta.me',
-    path: { user: '/' },
+    path: { user: '/' }, // no note support
   },
   {
     name: 'Nostrudel',
@@ -68,6 +77,10 @@ export const clients: Client[] = [
   },
 ]
 
+/**
+ * Show clients links based on query type
+ * @param query
+ */
 export const showClients = (query: Query) => {
   // show header
   showHeader()

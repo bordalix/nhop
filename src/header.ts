@@ -1,3 +1,6 @@
+/**
+ * Show header with home and clients buttons
+ */
 export const showHeader = () => {
   document.querySelector<HTMLDivElement>('#header')!.innerHTML = `
     <button id="home-button" aria-label="Home">

@@ -91,8 +91,9 @@ const showUser = (query: Query) => {
           <h1 class="user-name">${user.name}</h1>
           <img
             class="user-picture"
-            src="${user.picture || 'https://via.placeholder.com/150'}"
+            src="${user.picture || '/nhop.svg'}"
             alt="User Picture"
+            onerror="this.src='/nhop.svg'"
           />
           <div class="user-details">
             ${field('about')}

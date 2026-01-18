@@ -33,10 +33,15 @@ export class Fetcher {
       throw new Error(`Failed to parse user metadata: ${error instanceof Error ? error.message : 'Invalid JSON'}`)
     }
     // fetch user relays
-    const relaysEvent = await this.fetchEvent({
-      kinds: [10002],
-      authors: [pubkey],
-    })
+    let relaysEvent: NostrEvent | null = null
+    try {
+      relaysEvent = await this.fetchEvent({
+        kinds: [10002],
+        authors: [pubkey],
+      })
+    } catch (e) {
+      // no relays event found, proceed without it
+    }
     user.relays = relaysEvent ? relaysEvent.tags.filter((t) => t[0] === 'r').map((t) => t[1]) : []
     this.relays = [...this.query.relays, ...user.relays] // we could have relays extracted before
     // fetch latest notes from user

@@ -4,31 +4,15 @@ import { parseNip19 } from './parser'
 import { nip19 } from 'nostr-tools'
 
 export class Query {
-  hex: string
-  error: string
-  input: string
-  prefix: string
-  isNote: boolean
-  isUser: boolean
-  relays: string[]
-
   constructor(
-    hex: string,
-    error: string,
-    input: string,
-    prefix: string,
-    isNote: boolean,
-    isUser: boolean,
-    relays: string[]
-  ) {
-    this.hex = hex
-    this.error = error
-    this.input = input
-    this.prefix = prefix
-    this.isNote = isNote
-    this.isUser = isUser
-    this.relays = relays
-  }
+    public hex: string,
+    public error: string,
+    public input: string,
+    public prefix: string,
+    public isNote: boolean,
+    public isUser: boolean,
+    public relays: string[]
+  ) {}
 
   static async create(input: string): Promise<Query> {
     let hex = ''

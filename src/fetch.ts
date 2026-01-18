@@ -5,11 +5,9 @@ import { nip19, SimplePool } from 'nostr-tools'
 import type { Filter, NostrEvent } from 'nostr-tools'
 
 export class Fetcher {
-  query: Query
   relays: string[] // can be populated from naddr, nprofile, nevent
 
-  constructor(query: Query) {
-    this.query = query
+  constructor(public query: Query) {
     this.relays = query.relays
   }
 

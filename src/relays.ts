@@ -4,13 +4,13 @@
 const defaultRelays = [
   'wss://nos.lol',
   'wss://nostr.wine',
+  'wss://purplepag.es',
   'wss://relay.damus.io',
   'wss://eden.nostr.land',
   'wss://relay.nos.social',
   'wss://relay.primal.net',
   'wss://relay.noswhere.com',
   'wss://relay.snort.social',
-  'wss://relay.bitcoinpark.com',
 ]
 
 /**
